@@ -44,10 +44,17 @@ helm install trino trino/trino --values trino-values.yaml --namespace trino --cr
 
 ## Making Changes
 
-### With Helm Plugin Approach:
-1. Edit `trino-values.yaml` or update values in `argocd-helm-application.yaml`
-2. Commit and push changes
-3. Argo CD automatically syncs the changes
+### With Helm Plugin Approach (Recommended):
+1. **Edit `trino-values.yaml`** - Update configuration values in the repository
+2. **Commit and push changes** - `git add . && git commit -m "Update Trino config" && git push`
+3. **Argo CD automatically syncs** - Changes are applied to the cluster automatically
+
+**Example: Scaling Workers**
+```yaml
+# In trino-values.yaml
+server:
+  workers: 6  # Change from 5 to 6
+```
 
 ### With Static Manifests Approach:
 1. Edit `trino-values.yaml`

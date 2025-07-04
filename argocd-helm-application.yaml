@@ -7,75 +7,16 @@ metadata:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-  source:
-    repoURL: https://trinodb.github.io/charts
-    chart: trino
-    targetRevision: 1.39.1
-    helm:
-      values: |
-        image:
-          repository: trinodb/trino
-          tag: "435"
-          pullPolicy: IfNotPresent
-
-        server:
-          workers: 5
-          node:
-            environment: production
-            dataDir: /data/trino
-            pluginDir: /usr/lib/trino/plugin
-          log:
-            trino:
-              level: INFO
-          config:
-            path: /etc/trino
-            http:
-              port: 8080
-            https:
-              enabled: false
-            authenticationType: ""
-            query:
-              maxMemory: "4GB"
-              maxMemoryPerNode: "1GB"
-            memory:
-              heapHeadroomPerNode: "1GB"
-          exchangeManager:
-            name: "filesystem"
-            baseDir: "/tmp/trino-local-file-system-exchange-manager"
-
-        service:
-          type: LoadBalancer
-          port: 8080
-
-        coordinator:
-          jvm:
-            maxHeapSize: "8G"
-            gcMethod:
-              type: "UseG1GC"
-              g1:
-                heapRegionSize: "32M"
-          resources:
-            requests:
-              memory: "2Gi"
-              cpu: "1"
-            limits:
-              memory: "8Gi"
-              cpu: "2"
-
-        worker:
-          jvm:
-            maxHeapSize: "8G"
-            gcMethod:
-              type: "UseG1GC"
-              g1:
-                heapRegionSize: "32M"
-          resources:
-            requests:
-              memory: "2Gi"
-              cpu: "1"
-            limits:
-              memory: "8Gi"
-              cpu: "2"
+  sources:
+    - repoURL: https://trinodb.github.io/charts
+      chart: trino
+      targetRevision: 1.39.1
+      helm:
+        valueFiles:
+          - $values/trino-values.yaml
+    - repoURL: https://github.com/AnkushChandra/trino-aws.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: trino
