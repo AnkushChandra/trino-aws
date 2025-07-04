@@ -1,13 +1,13 @@
 # Trino on AWS EKS
 
-This repository contains the Kubernetes manifests for deploying Trino on AWS EKS using Helm charts and Argo CD.
+This repository contains the configuration for deploying Trino on AWS EKS using Argo CD with native Helm support.
 
 ## Components
 
 - **trino-values.yaml**: Helm values file for Trino configuration
-- **trino-manifests.yaml**: Generated Kubernetes manifests from Helm chart
+- **argocd-application.yaml**: Argo CD Application manifest for GitOps (static manifests)
+- **argocd-helm-application.yaml**: Argo CD Application manifest using Helm plugin (recommended)
 - **namespace.yaml**: Namespace definition for Trino
-- **argocd-application.yaml**: Argo CD Application manifest for GitOps deployment
 
 ## Trino Configuration
 
@@ -19,23 +19,41 @@ The Trino deployment includes:
 
 ## Deployment Options
 
-### Option 1: Direct kubectl deployment
+### Option 1: Argo CD with Helm Plugin (Recommended)
 ```bash
-kubectl apply -f namespace.yaml
-kubectl apply -f trino-manifests.yaml
+kubectl apply -f argocd-helm-application.yaml
 ```
 
-### Option 2: Argo CD GitOps deployment
+This approach:
+- Uses Trino Helm chart directly from https://trinodb.github.io/charts
+- No need to generate/commit static manifests
+- Cleaner repository with only configuration files
+- Native Helm features and lifecycle management
+
+### Option 2: Argo CD with Static Manifests
 ```bash
 kubectl apply -f argocd-application.yaml
 ```
 
-### Option 3: Helm deployment
+### Option 3: Direct Helm deployment
 ```bash
 helm repo add trino https://trinodb.github.io/charts
 helm repo update
 helm install trino trino/trino --values trino-values.yaml --namespace trino --create-namespace
 ```
+
+## Making Changes
+
+### With Helm Plugin Approach:
+1. Edit `trino-values.yaml` or update values in `argocd-helm-application.yaml`
+2. Commit and push changes
+3. Argo CD automatically syncs the changes
+
+### With Static Manifests Approach:
+1. Edit `trino-values.yaml`
+2. Regenerate manifests: `helm template trino trino/trino --values trino-values.yaml --namespace trino > trino-manifests.yaml`
+3. Commit and push all changes
+4. Argo CD automatically syncs the changes
 
 ## Access Trino
 
@@ -58,7 +76,10 @@ Trino exposes metrics at `/v1/info` and `/v1/status` endpoints for monitoring in
 
 ## Scaling
 
-To scale workers:
+### With Helm Plugin:
+Update the `server.workers` value in `argocd-helm-application.yaml` or `trino-values.yaml`
+
+### With Static Manifests:
 ```bash
 kubectl scale deployment trino-worker --replicas=<desired-count> -n trino
 ```
