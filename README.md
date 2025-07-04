@@ -59,10 +59,12 @@ helm install trino trino/trino --values trino-values.yaml --namespace trino --cr
 
 After deployment, get the LoadBalancer URL:
 ```bash
-kubectl get svc -n trino trino
+kubectl get svc -n trino trino-helm-trino
 ```
 
-Access the Trino Web UI at: `http://<EXTERNAL-IP>:8080`
+**Current Access URL**: http://k8s-trino-trinohel-c502deb0a7-d7ef3fa873e099e6.elb.us-west-2.amazonaws.com:8080
+
+Access the Trino Web UI at the URL above.
 
 ## Resource Requirements
 
