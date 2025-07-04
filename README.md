@@ -13,7 +13,7 @@ This repository contains the Kubernetes manifests for deploying Trino on AWS EKS
 
 The Trino deployment includes:
 - 1 Coordinator node with 8GB heap memory
-- 2 Worker nodes with 8GB heap memory each
+- 4 Worker nodes with 8GB heap memory each
 - LoadBalancer service for external access
 - Production-ready configuration with G1GC
 
@@ -49,8 +49,8 @@ Access the Trino Web UI at: `http://<EXTERNAL-IP>:8080`
 ## Resource Requirements
 
 - **Coordinator**: 2 CPU cores, 8GB memory
-- **Workers**: 2 CPU cores each, 8GB memory each
-- **Total**: 6 CPU cores, 24GB memory
+- **Workers**: 2 CPU cores each, 8GB memory each (4 workers)
+- **Total**: 10 CPU cores, 40GB memory
 
 ## Monitoring
 
