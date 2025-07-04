@@ -355,7 +355,7 @@ spec:
       maxSurge: 25%
       maxUnavailable: 25%
     type: RollingUpdate
-  replicas: 4
+  replicas: 5
   selector:
     matchLabels:
       app.kubernetes.io/name: trino
